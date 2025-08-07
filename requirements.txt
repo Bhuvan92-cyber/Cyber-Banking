@@ -1,0 +1,10 @@
+django
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+xgboost
+imbalanced-learn
+pillow
+reportlab

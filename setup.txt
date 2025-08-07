@@ -1,0 +1,139 @@
+Microsoft Windows [Version 10.0.26100.4652]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\chbhu\Desktop\PROJECT'S\CyberPhysicalBanking>python manage.py makemigrations
+No changes detected
+
+C:\Users\chbhu\Desktop\PROJECT'S\CyberPhysicalBanking>python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, app, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying app.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying sessions.0001_initial... OK
+
+C:\Users\chbhu\Desktop\PROJECT'S\CyberPhysicalBanking>python manage.py createsuperuser
+Username (leave blank to use 'chbhu'): Bhuvan
+Email address: chbhuvansri00@gmail.com
+Password:
+Password (again):
+The password is too similar to the username.
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+
+C:\Users\chbhu\Desktop\PROJECT'S\CyberPhysicalBanking>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+August 07, 2025 - 19:43:56
+Django version 4.2.22, using settings 'cyber_physical_banking.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+[07/Aug/2025 19:43:59] "GET / HTTP/1.1" 200 1316
+Not Found: /favicon.ico
+[07/Aug/2025 19:43:59] "GET /favicon.ico HTTP/1.1" 404 4970
+[07/Aug/2025 19:44:02] "GET /register/ HTTP/1.1" 200 2752
+[07/Aug/2025 19:44:41] "POST /register/ HTTP/1.1" 200 2870
+[07/Aug/2025 19:44:58] "POST /register/ HTTP/1.1" 302 0
+[07/Aug/2025 19:44:58] "GET /login/ HTTP/1.1" 200 1846
+[07/Aug/2025 19:45:15] "POST /login/ HTTP/1.1" 302 0
+[07/Aug/2025 19:45:15] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:45:42] "GET /upload-dataset/ HTTP/1.1" 200 1454
+[07/Aug/2025 19:46:25] "POST /upload-dataset/ HTTP/1.1" 200 1849
+[07/Aug/2025 19:46:39] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:46:40] "GET /preprocess/ HTTP/1.1" 200 1224
+[07/Aug/2025 19:46:42] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:46:44] "GET /run-ml-algorithms/ HTTP/1.1" 200 2247
+[07/Aug/2025 19:46:48] "GET /run-algorithm/rf/ HTTP/1.1" 200 35218
+[07/Aug/2025 19:46:55] "GET /run-ml-algorithms/ HTTP/1.1" 200 2247
+[07/Aug/2025 19:46:59] "GET /run-algorithm/gb/ HTTP/1.1" 200 32886
+[07/Aug/2025 19:47:05] "GET /run-ml-algorithms/ HTTP/1.1" 200 2247
+[07/Aug/2025 19:47:10] "GET /run-algorithm/svm/ HTTP/1.1" 200 33119
+[07/Aug/2025 19:47:14] "GET /run-ml-algorithms/ HTTP/1.1" 200 2247
+[07/Aug/2025 19:47:18] "GET /run-algorithm/lr/ HTTP/1.1" 200 34334
+[07/Aug/2025 19:47:22] "GET /run-ml-algorithms/ HTTP/1.1" 200 2247
+[07/Aug/2025 19:47:24] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:47:26] "GET /generate-report/ HTTP/1.1" 200 345
+[07/Aug/2025 19:47:27] "GET /media/pie.png HTTP/1.1" 200 28070
+[07/Aug/2025 19:47:27] "GET /media/line.png HTTP/1.1" 200 18406
+[07/Aug/2025 19:47:30] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:47:32] "GET /predict-best/ HTTP/1.1" 200 35199
+[07/Aug/2025 19:47:36] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:47:38] "GET /predict/ HTTP/1.1" 200 2637
+[07/Aug/2025 19:48:01] "POST /predict/ HTTP/1.1" 200 35109
+[07/Aug/2025 19:48:06] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:48:12] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:48:14] "GET /logout/ HTTP/1.1" 302 0
+[07/Aug/2025 19:48:14] "GET / HTTP/1.1" 200 1316
+[07/Aug/2025 19:48:15] "GET /admin/ HTTP/1.1" 302 0
+[07/Aug/2025 19:48:15] "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4186
+[07/Aug/2025 19:48:36] "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+[07/Aug/2025 19:48:36] "GET /admin/ HTTP/1.1" 200 5562
+[07/Aug/2025 19:48:36] "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+[07/Aug/2025 19:48:36] "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+[07/Aug/2025 19:48:36] "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[07/Aug/2025 19:48:40] "GET /admin/auth/user/ HTTP/1.1" 200 10868
+[07/Aug/2025 19:48:40] "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+[07/Aug/2025 19:48:40] "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[07/Aug/2025 19:48:40] "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+[07/Aug/2025 19:48:40] "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+[07/Aug/2025 19:48:40] "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+[07/Aug/2025 19:48:40] "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[07/Aug/2025 19:48:40] "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+[07/Aug/2025 19:48:40] "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[07/Aug/2025 19:48:40] "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+[07/Aug/2025 19:48:40] "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+[07/Aug/2025 19:48:40] "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[07/Aug/2025 19:48:40] "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+[07/Aug/2025 19:48:40] "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+[07/Aug/2025 19:48:40] "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+[07/Aug/2025 19:48:40] "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+[07/Aug/2025 19:48:40] "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+[07/Aug/2025 19:48:54] "GET /admin/ HTTP/1.1" 200 5562
+[07/Aug/2025 19:48:55] "GET /admin/login/?next=/admin/ HTTP/1.1" 302 0
+[07/Aug/2025 19:48:55] "GET /admin/ HTTP/1.1" 200 5562
+[07/Aug/2025 19:48:56] "GET / HTTP/1.1" 302 0
+[07/Aug/2025 19:48:56] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:48:59] "GET /logout/ HTTP/1.1" 302 0
+[07/Aug/2025 19:48:59] "GET / HTTP/1.1" 200 1316
+[07/Aug/2025 19:54:18] "GET / HTTP/1.1" 200 1316
+[07/Aug/2025 19:54:20] "GET /dashboard/ HTTP/1.1" 302 0
+[07/Aug/2025 19:54:20] "GET /login/?next=/dashboard/ HTTP/1.1" 200 1846
+[07/Aug/2025 19:54:29] "POST /login/?next=/dashboard/ HTTP/1.1" 200 29
+[07/Aug/2025 19:54:35] "GET /login/?next=/dashboard/ HTTP/1.1" 200 1846
+[07/Aug/2025 19:54:46] "POST /login/?next=/dashboard/ HTTP/1.1" 302 0
+[07/Aug/2025 19:54:46] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 19:54:50] "GET /upload-dataset/ HTTP/1.1" 200 1454
+[07/Aug/2025 19:55:08] "POST /upload-dataset/ HTTP/1.1" 200 1807
+[07/Aug/2025 19:55:14] "GET /dashboard/ HTTP/1.1" 200 3432
+[07/Aug/2025 20:00:15] "GET / HTTP/1.1" 302 0
+[07/Aug/2025 20:00:15] "GET /dashboard/ HTTP/1.1" 200 3504
+[07/Aug/2025 20:00:22] "GET /logout/ HTTP/1.1" 302 0
+[07/Aug/2025 20:00:22] "GET / HTTP/1.1" 200 1316
+[07/Aug/2025 20:00:25] "GET /dashboard/ HTTP/1.1" 302 0
+[07/Aug/2025 20:00:25] "GET /login/?next=/dashboard/ HTTP/1.1" 200 1846
+[07/Aug/2025 20:00:37] "POST /login/?next=/dashboard/ HTTP/1.1" 200 29
+[07/Aug/2025 20:00:40] "GET /login/?next=/dashboard/ HTTP/1.1" 200 1846
+[07/Aug/2025 20:00:50] "POST /login/?next=/dashboard/ HTTP/1.1" 302 0
+[07/Aug/2025 20:00:50] "GET /dashboard/ HTTP/1.1" 200 3504
+[07/Aug/2025 20:00:53] "GET /upload-dataset/ HTTP/1.1" 200 1454
+[07/Aug/2025 20:01:00] "POST /upload-dataset/ HTTP/1.1" 200 1807
+[07/Aug/2025 20:01:02] "GET /dashboard/ HTTP/1.1" 200 3504
