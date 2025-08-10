@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .hero-section {
+        text-align: center;
+        padding: 40px 20px 20px 20px;
+    }
+
+    .hero-title {
+        font-size: 36px;
+        font-weight: bold;
+        color: #003366;
+        margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+    .search-box {
+        width: 60%;
+        margin: 0 auto 30px auto;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        outline: none;
+    }
+
+    .dashboard-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .dashboard-buttons a {
+        width: 300px;
+        padding: 12px;
+        text-align: center;
+        font-size: 18px;
+        background-color: #007bff;
+        color: white !important;
+        border-radius: 8px;
+        transition: 0.3s ease;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+    .dashboard-buttons a:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .logout-button {
+        width: 300px;
+        padding: 12px;
+        text-align: center;
+        font-size: 18px;
+        background-color: #dc3545; /* Bootstrap danger color */
+        color: white !important;
+        border-radius: 8px;
+        transition: 0.3s ease;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        display: block;
+        margin: 20px auto; /* Center the logout button */
+        /* Add hover effect consistent with buttons */
+        transition: 0.3s ease, transform 0.3s ease;
+    }
+
+    .logout-button:hover {
+        background-color: #c82333; /* Darker shade for hover */
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-title"></div>
+    <div class="hero-subtitle">Manage IoT-enabled banking fraud detection securely and intelligently</div>
+</div>
+
+<div class="dashboard-buttons">
+    <a href="{% url 'upload_dataset' %}">Upload Dataset</a>
+    <a href="{% url 'preprocess_dataset' %}">Preprocess Dataset</a>
+    <a href="{% url 'run_ml_algorithms' %}">Run ML Algorithms</a>
+    <a href="{% url 'generate_report' %}">Generate Graphical Report</a>
+    <a href="{% url 'predict_best_algorithm' %}">Analyze & Predict Best Algorithm</a>
+    <a href="{% url 'predict' %}">Prediction</a>
+</div>
+
+<a href="{% url 'logout' %}" class="logout-button">Logout</a>
+
+{% endblock %}

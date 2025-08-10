@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+/* Layout */
+.admin-dashboard-container {
+    max-width: 850px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.97);
+    border-radius: 12px;
+    padding: 36px 32px 32px 32px;
+    box-shadow: 0 4px 28px rgba(44, 62, 80, 0.21);
+}
+
+.dashboard-title {
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #2d3a4b;
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    margin-bottom: 24px;
+}
+
+.dashboard-title i {
+    color: #007bff;
+    font-size: 2.2rem;
+}
+
+.table thead tr {
+    background: #f4f7fa;
+    color: #455568;
+    font-size: 1.09rem;
+}
+
+/* Table Styles */
+.table td, .table th {
+    vertical-align: middle;
+    text-align: center;
+    padding: 14px 8px;
+    border-top: 1.5px solid #e8e9ef;
+}
+
+.table tbody tr:hover {
+    background-color: #f0f7ff;
+    transition: background 0.2s;
+}
+
+/* Delete Button */
+.btn-delete-user {
+    background: #e74c3c;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px 18px;
+    font-size: 0.99rem;
+    transition: background 0.19s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.btn-delete-user i {
+    font-size: 1.05em;
+}
+
+.btn-delete-user:hover {
+    background: #c0392b;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .admin-dashboard-container { padding: 18px 3vw; }
+    .dashboard-title { font-size: 1.38rem; }
+    .table th, .table td { font-size: 0.98rem; padding: 8px 5px; }
+}
+</style>
+
+<div class="admin-dashboard-container">
+    <div class="dashboard-title">
+        <i class="fas fa-users-cog"></i>
+        Admin Dashboard
+    </div>
+
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th><i class="fas fa-user"></i> Username</th>
+                <th><i class="fas fa-envelope"></i> Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <a href="{% url 'delete_user' user.id %}"
+                       class="btn btn-delete-user btn-sm" title="Delete User"
+                       onclick="return confirm('Are you sure you want to delete {{ user.username }}?');">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3" class="text-muted">No users found.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Font Awesome CDN (insert in your base.html head if not already) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+{% endblock %}

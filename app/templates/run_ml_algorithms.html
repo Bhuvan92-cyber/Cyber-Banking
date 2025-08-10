@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .algorithm-options {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .algorithm-options h2 {
+        color: #003366;
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+
+    .ml-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .ml-buttons a {
+        width: 250px;
+        padding: 12px;
+        text-align: center;
+        font-size: 18px;
+        background-color: #28a745;
+        color: white !important;
+        border-radius: 8px;
+        transition: 0.3s ease;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .ml-buttons a:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="algorithm-options">
+    <h2>Select an ML Algorithm to Run</h2>
+    <div class="ml-buttons">
+        <a href="{% url 'run_algorithm' 'rf' %}">Run Random Forest</a>
+        <a href="{% url 'run_algorithm' 'gb' %}">Run Gradient Boosting</a>
+        <a href="{% url 'run_algorithm' 'svm' %}">Run SVM</a>
+        <a href="{% url 'run_algorithm' 'lr' %}">Run Logistic Regression</a>
+    </div>
+    
+</div>
+<a href="{% url 'dashboard' %}" style="padding: 10px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Back to Dashboard</a>
+
+
+{% endblock %}

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cyber-Physical Banking</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url("/static/images/background.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+        .welcome-header {
+            background: linear-gradient(90deg, #0f2027, #2c5364);
+            color: #ffffff;
+            font-family: 'Segoe UI', 'Roboto', 'Montserrat', 'Arial', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(44, 83, 100, 0.28);
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            border: 2px solid #2c5364;
+            transition: box-shadow 0.3s;
+        }
+        .welcome-header:hover {
+            box-shadow: 0 8px 32px rgba(44,83,100,0.40);
+        }
+
+        /* ✅ Carousel Image Size Fix */
+        .carousel-item img {
+            max-height: 400px;       /* Limit maximum height */
+            width: auto;             /* Maintain aspect ratio */
+            max-width: 100%;         /* Prevent overflow */
+            margin: 0 auto;          /* Center horizontally */
+            object-fit: contain;     /* Scale image nicely */
+        }
+    </style>
+</head>
+<body>
+
+<header class="mb-4">
+    <h1 class="welcome-header">Welcome to Cyber-Physical Banking</h1>
+</header>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">IoT Enabled Banking</a>
+    </div>
+</nav>
+
+<div class="container">
+    {% if not user.is_authenticated %}
+        <section>
+            <h2>User Access</h2>
+            <div class="d-flex justify-content-center mb-3">
+                <button class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#adminLoginModal">Admin Login</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userLoginModal">User Login</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+            </div>
+        </section>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <section class="my-4">
+        <h2>Banking Services</h2>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">ATM Management</h5>
+                        <p class="card-text">Track and control ATM operations.</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#atmInfo">Details</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Smart Asset Tracking</h5>
+                        <p class="card-text">Monitor assets in real time.</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetInfo">Details</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Instant Notifications</h5>
+                        <p class="card-text">Stay informed instantly.</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#notifInfo">Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion my-3" id="processAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#processStep" aria-expanded="true">
+                        Cyber-Physical Process Example
+                    </button>
+                </h2>
+                <div id="processStep" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+<pre>
+if transaction_requested:
+    verify biometric scan
+    enable secure transfer
+</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ol>
+            <li>Login to your account</li>
+            <li>Choose a banking service</li>
+            <li>Complete your transaction</li>
+        </ol>
+        <blockquote class="blockquote">
+            <p>"The future of banking lies in the seamless integration of physical devices and digital intelligence."</p>
+            <footer class="blockquote-footer">Tech Innovator Magazine</footer>
+        </blockquote>
+    </section>
+
+    <section class="my-4">
+        <h2>Branch IoT Devices</h2>
+        <ul class="nav nav-tabs" id="deviceTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="safe-tab" data-bs-toggle="tab" data-bs-target="#safe" type="button" role="tab">Smart Safe</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera" type="button" role="tab">Security Camera</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="biometric-tab" data-bs-toggle="tab" data-bs-target="#biometric" type="button" role="tab">Biometric Scanner</button>
+            </li>
+        </ul>
+        <div class="tab-content pt-3" id="deviceTabContent">
+            <div class="tab-pane fade show active" id="safe" role="tabpanel">
+                <strong>Smart Safe:</strong> Automated cash deposit and withdrawal using IoT.
+            </div>
+            <div class="tab-pane fade" id="camera" role="tabpanel">
+                <strong>Security Camera:</strong> Real-time threat monitoring at branch locations.
+            </div>
+            <div class="tab-pane fade" id="biometric" role="tabpanel">
+                <strong>Biometric Scanner:</strong> Secure user authentication for safe and fast banking.
+            </div>
+        </div>
+    </section>
+
+    <section class="my-4">
+        <h2>Media Center</h2>
+        <div id="mediaCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+            <div id="mediaCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+            <div id="mediaCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="d-flex align-items-center justify-content-center" style="height:80px;">
+                            <img src="/static/images/branch1.jpg" alt="Branch IoT" style="max-height:50px; width:auto; margin-right:16px;">
+                            <span style="font-size:1.1rem;">Branch IoT Device</span>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="d-flex align-items-center justify-content-center" style="height:80px;">
+                            <img src="/static/images/branch2.jpg" alt="ATM IoT" style="max-height:50px; width:auto; margin-right:16px;">
+                            <span style="font-size:1.1rem;">ATM IoT Device</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#mediaCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#mediaCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+        <h4>Bank branch with IoT devices</h4>
+        <center><iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/dL5uRQAlTwk"
+            title="Banking Demo Live"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            class="mt-3">
+        </iframe></center>
+    </section>
+
+    <aside class="mt-4">
+        <h3>Did You Know?</h3>
+        <p>
+            80% of banks worldwide are investing in IoT to improve customer experience and operational efficiency.
+        </p>
+    </aside>
+</div>
+
+<!-- Modals and rest of your code remain unchanged -->
+<!-- ... -->
+
+<footer class="text-center py-3 bg-light">
+    &copy; 2025 Cyber-Physical Banking. All rights reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showToast(msg, type='info') {
+        const toastEl = document.createElement('div');
+        toastEl.className = 'toast align-items-center text-bg-' + type + ' border-0';
+        toastEl.role = 'alert';
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+        toastEl.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body">${msg}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        `;
+        document.getElementById('toastContainer').appendChild(toastEl);
+        new bootstrap.Toast(toastEl).show();
+        toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+    }
+</script>
+</body>
+</html>

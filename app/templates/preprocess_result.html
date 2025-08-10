@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Preprocessing Completed</h2>
+    <p><strong>Original Rows:</strong> {{ original_rows }}</p>
+    <p><strong>Rows After Removing Duplicates:</strong> {{ rows_after }}</p>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-success mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}
