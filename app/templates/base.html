@@ -36,16 +36,46 @@
             transition: box-shadow 0.3s;
         }
         .welcome-header:hover {
-            box-shadow: 0 8px 32px rgba(44,83,100,0.40);
+            box-shadow: 0 8px 32px rgba(44,83,100,0.4);
         }
-
-        /* ✅ Carousel Image Size Fix */
         .carousel-item img {
-            max-height: 400px;       /* Limit maximum height */
-            width: auto;             /* Maintain aspect ratio */
-            max-width: 100%;         /* Prevent overflow */
-            margin: 0 auto;          /* Center horizontally */
-            object-fit: contain;     /* Scale image nicely */
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+        .media-scroller {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            padding: 10px 0;
+        }
+        .media-track {
+            display: flex;
+            gap: 40px;
+            animation: scroll-left 20s linear infinite;
+        }
+        .media-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 0 0 auto;
+        }
+        .media-item img {
+            height: 50px;
+            width: auto;
+        }
+        .media-item span {
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+        @keyframes scroll-left {
+            from { transform: translateX(0%); }
+            to { transform: translateX(-50%); }
+        }
+        .media-scroller:hover .media-track {
+            animation-play-state: paused;
         }
     </style>
 </head>
@@ -77,15 +107,16 @@
 
     {% block content %}{% endblock %}
 
+    <!-- Banking Services Section -->
     <section class="my-4">
         <h2>Banking Services</h2>
         <div class="row">
+            <!-- Cards for services -->
             <div class="col-md-4 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
                         <h5 class="card-title">ATM Management</h5>
                         <p class="card-text">Track and control ATM operations.</p>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#atmInfo">Details</button>
                     </div>
                 </div>
             </div>
@@ -94,7 +125,6 @@
                     <div class="card-body">
                         <h5 class="card-title">Smart Asset Tracking</h5>
                         <p class="card-text">Monitor assets in real time.</p>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetInfo">Details</button>
                     </div>
                 </div>
             </div>
@@ -103,117 +133,91 @@
                     <div class="card-body">
                         <h5 class="card-title">Instant Notifications</h5>
                         <p class="card-text">Stay informed instantly.</p>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#notifInfo">Details</button>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="accordion my-3" id="processAccordion">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#processStep" aria-expanded="true">
-                        Cyber-Physical Process Example
-                    </button>
-                </h2>
-                <div id="processStep" class="accordion-collapse collapse show">
-                    <div class="accordion-body">
+    <!-- Accordion -->
+    <div class="accordion my-3" id="processAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#processStep" aria-expanded="true">
+                    Cyber-Physical Process Example
+                </button>
+            </h2>
+            <div id="processStep" class="accordion-collapse collapse show">
+                <div class="accordion-body">
 <pre>
 if transaction_requested:
     verify biometric scan
     enable secure transfer
 </pre>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <ol>
-            <li>Login to your account</li>
-            <li>Choose a banking service</li>
-            <li>Complete your transaction</li>
-        </ol>
-        <blockquote class="blockquote">
-            <p>"The future of banking lies in the seamless integration of physical devices and digital intelligence."</p>
-            <footer class="blockquote-footer">Tech Innovator Magazine</footer>
-        </blockquote>
-    </section>
+    <ol>
+        <li>Login to your account</li>
+        <li>Choose a banking service</li>
+        <li>Complete your transaction</li>
+    </ol>
+    <blockquote class="blockquote">
+        <p>"The future of banking lies in the seamless integration of physical devices and digital intelligence."</p>
+        <footer class="blockquote-footer">Tech Innovator Magazine</footer>
+    </blockquote>
 
+    <!-- Branch IoT Devices Tabs -->
     <section class="my-4">
         <h2>Branch IoT Devices</h2>
+        <!-- Tabs -->
         <ul class="nav nav-tabs" id="deviceTab" role="tablist">
             <li class="nav-item">
-                <button class="nav-link active" id="safe-tab" data-bs-toggle="tab" data-bs-target="#safe" type="button" role="tab">Smart Safe</button>
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#safe" type="button">Smart Safe</button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera" type="button" role="tab">Security Camera</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#camera" type="button">Security Camera</button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="biometric-tab" data-bs-toggle="tab" data-bs-target="#biometric" type="button" role="tab">Biometric Scanner</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#biometric" type="button">Biometric Scanner</button>
             </li>
         </ul>
-        <div class="tab-content pt-3" id="deviceTabContent">
-            <div class="tab-pane fade show active" id="safe" role="tabpanel">
-                <strong>Smart Safe:</strong> Automated cash deposit and withdrawal using IoT.
-            </div>
-            <div class="tab-pane fade" id="camera" role="tabpanel">
-                <strong>Security Camera:</strong> Real-time threat monitoring at branch locations.
-            </div>
-            <div class="tab-pane fade" id="biometric" role="tabpanel">
-                <strong>Biometric Scanner:</strong> Secure user authentication for safe and fast banking.
-            </div>
+        <div class="tab-content pt-3">
+            <div class="tab-pane fade show active" id="safe"> <strong>Smart Safe:</strong> Automated cash deposit and withdrawal using IoT. </div>
+            <div class="tab-pane fade" id="camera"> <strong>Security Camera:</strong> Real-time threat monitoring at branch locations. </div>
+            <div class="tab-pane fade" id="biometric"> <strong>Biometric Scanner:</strong> Secure user authentication. </div>
         </div>
     </section>
 
+    <!-- Media Scroller -->
     <section class="my-4">
         <h2>Media Center</h2>
-        <div id="mediaCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
-            <div id="mediaCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
-            <div id="mediaCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="d-flex align-items-center justify-content-center" style="height:80px;">
-                            <img src="/static/images/branch1.jpg" alt="Branch IoT" style="max-height:50px; width:auto; margin-right:16px;">
-                            <span style="font-size:1.1rem;">Branch IoT Device</span>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="d-flex align-items-center justify-content-center" style="height:80px;">
-                            <img src="/static/images/branch2.jpg" alt="ATM IoT" style="max-height:50px; width:auto; margin-right:16px;">
-                            <span style="font-size:1.1rem;">ATM IoT Device</span>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#mediaCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#mediaCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
+        <div class="media-scroller">
+            <div class="media-track">
+                <div class="media-item"><img src="/static/images/branch1.jpg" alt="Branch IoT"><span>Branch IoT</span></div>
+                <div class="media-item"><img src="/static/images/branch2.jpg" alt="ATM IoT"><span>ATM IoT</span></div>
+                <div class="media-item"><img src="/static/images/branch1.jpg" alt="Branch IoT"><span>Branch IoT</span></div>
+                <div class="media-item"><img src="/static/images/branch2.jpg" alt="ATM IoT"><span>ATM IoT</span></div>
             </div>
+        </div>
         <h4>Bank branch with IoT devices</h4>
-        <center><iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/dL5uRQAlTwk"
-            title="Banking Demo Live"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            class="mt-3">
-        </iframe></center>
+        <div class="text-center mt-3">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/dL5uRQAlTwk" title="Banking Demo Live" frameborder="0" allowfullscreen>
+            </iframe>
+        </div>
     </section>
 
+    <!-- Aside -->
     <aside class="mt-4">
         <h3>Did You Know?</h3>
-        <p>
-            80% of banks worldwide are investing in IoT to improve customer experience and operational efficiency.
-        </p>
+        <p>80% of banks worldwide are investing in IoT to improve customer experience and efficiency.</p>
     </aside>
 </div>
 
-<!-- Modals and rest of your code remain unchanged -->
-<!-- ... -->
+<!-- ✅ Toast Container -->
+<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
 <footer class="text-center py-3 bg-light">
     &copy; 2025 Cyber-Physical Banking. All rights reserved.
@@ -225,8 +229,6 @@ if transaction_requested:
         const toastEl = document.createElement('div');
         toastEl.className = 'toast align-items-center text-bg-' + type + ' border-0';
         toastEl.role = 'alert';
-        toastEl.setAttribute('aria-live', 'assertive');
-        toastEl.setAttribute('aria-atomic', 'true');
         toastEl.innerHTML = `
           <div class="d-flex">
             <div class="toast-body">${msg}</div>
