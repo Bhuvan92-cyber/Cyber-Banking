@@ -191,29 +191,114 @@ if transaction_requested:
         </div>
     </section>
 
-    <!-- Media Scroller -->
-    <section class="my-4">
-        <h2>Media Center</h2>
-        <div class="media-scroller">
-            <div class="media-track">
-                <div class="media-item"><img src="/static/images/branch1.jpg" alt="Branch IoT"><span>Branch IoT</span></div>
-                <div class="media-item"><img src="/static/images/branch2.jpg" alt="ATM IoT"><span>ATM IoT</span></div>
-                <div class="media-item"><img src="/static/images/branch1.jpg" alt="Branch IoT"><span>Branch IoT</span></div>
-                <div class="media-item"><img src="/static/images/branch2.jpg" alt="ATM IoT"><span>ATM IoT</span></div>
-            </div>
-        </div>
-        <h4>Bank branch with IoT devices</h4>
-        <div class="text-center mt-3">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/dL5uRQAlTwk" title="Banking Demo Live" frameborder="0" allowfullscreen>
-            </iframe>
-        </div>
-    </section>
-
     <!-- Aside -->
     <aside class="mt-4">
         <h3>Did You Know?</h3>
         <p>80% of banks worldwide are investing in IoT to improve customer experience and efficiency.</p>
     </aside>
+</div>
+
+<!-- ✅ Admin Login Modal -->
+<div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminLoginLabel">Admin Login</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="adminUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="adminUsername" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="adminPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="adminPassword" name="password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Login as Admin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ User Login Modal -->
+<div class="modal fade" id="userLoginModal" tabindex="-1" aria-labelledby="userLoginLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userLoginLabel">User Login</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="userUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="userUsername" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="userPassword" name="password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerLabel">User Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="regUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="regUsername" name="username" required>
+                        <small class="text-muted">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="regEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="regEmail" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="regPassword1" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="regPassword1" name="password1" required>
+                        <small class="text-muted">
+                            • Your password can't be too similar to your other personal information.<br>
+                            • Your password must contain at least 8 characters.<br>
+                            • Your password can't be a commonly used password.<br>
+                            • Your password can't be entirely numeric.
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="regPassword2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="regPassword2" name="password2" required>
+                        <small class="text-muted">Enter the same password for verification.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- ✅ Toast Container -->

@@ -8,3 +8,9 @@ xgboost
 imbalanced-learn
 pillow
 reportlab
+
+# Production dependencies
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary

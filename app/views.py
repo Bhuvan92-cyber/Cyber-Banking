@@ -82,7 +82,7 @@ def login_user(request):
                 if user.is_superuser:
                     return redirect('admin_panel')
                 return redirect('dashboard')
-            return HttpResponse("Invalid username or password.")
+            messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -330,7 +330,9 @@ def run_algorithm(request, algo):
         'report': classification_report(y_test, y_pred),
         'matrix': matrix.tolist(),
         'report_img': report_img_base64,
-        'matrix_img': matrix_img_base64
+        'matrix_img': matrix_img_base64,
+        'y_true': y_test.tolist(),
+        'y_pred': y_pred.tolist()
     }
 
     return HttpResponse(f"""
@@ -431,9 +433,9 @@ def predict_best_algorithm(request):
     # Extract details
     accuracy = best_result['accuracy'] * 100  # percentage
     report = best_result.get('report', '')
-    matrix = best_result.get('matrix', '')
-    y_true = best_result.get('y_true', [])
-    y_pred = best_result.get('y_pred', [])
+    matrix = np.array(best_result.get('matrix', []))
+    y_true = np.array(best_result.get('y_true', []))
+    y_pred = np.array(best_result.get('y_pred', []))
 
     # === 1. Generate Confusion Matrix Heatmap ===
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -527,9 +529,9 @@ def download_report(request):
     best_algo, best_result = max(results.items(), key=lambda x: x[1]['accuracy'])
     accuracy = best_result['accuracy'] * 100
     report = best_result.get('report', '')
-    matrix = best_result.get('matrix', '')
-    y_true = best_result.get('y_true', [])
-    y_pred = best_result.get('y_pred', [])
+    matrix = np.array(best_result.get('matrix', []))
+    y_true = np.array(best_result.get('y_true', []))
+    y_pred = np.array(best_result.get('y_pred', []))
 
     # Generate confusion matrix image
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -603,9 +605,6 @@ def download_report(request):
 def predict(request):
     global PROCESSED_DATA, MODELS_ACCURACY, DATASET_CACHE
 
-    if PROCESSED_DATA is None:
-        return HttpResponse("<h3>Error: No processed data available for predictions.</h3>")
-
     if request.method == 'POST':
         try:
             # Step 1: Get input from form
@@ -646,23 +645,27 @@ def predict(request):
                         le = label_encoders[col]
                         val = input_data[col].iloc[0]
                         if val in le.classes_:
-                            input_data[col] = le.transform([val])
+                            input_data[col] = le.transform([val])[0]
                         else:
-                            input_data[col] = le.transform([le.classes_[0]])
+                            input_data[col] = le.transform([le.classes_[0]])[0]
                     else:
                         input_data[col] = 0  # fallback
 
-            # Step 4: Align input with training columns
+            # Step 4: Convert all columns to numeric
+            for col in input_data.columns:
+                input_data[col] = pd.to_numeric(input_data[col], errors='coerce')
+
+            # Step 5: Align input with training columns
             for col in trained_columns:
                 if col not in input_data.columns:
-                    input_data[col] = 0  # Add missing columns as 0
-
+                    input_data[col] = 0.0  # Add missing columns as 0
+            
             input_data = input_data[trained_columns]  # Reorder columns
 
-            # Step 5: Impute if needed
+            # Step 6: Impute if needed
             input_imputed = pd.DataFrame(imputer.transform(input_data), columns=trained_columns)
 
-            # Step 6: Predict
+            # Step 7: Predict
             prediction_label = model.predict(input_imputed)[0]
 
             # Optional: Feature importance

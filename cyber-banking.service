@@ -1,0 +1,24 @@
+[Unit]
+Description=Cyber-Banking Gunicorn Application
+After=network.target
+
+[Service]
+Type=notify
+User=cyberbanking
+Group=www-data
+WorkingDirectory=/home/cyberbanking/Cyber-Banking
+Environment="PATH=/home/cyberbanking/venv/bin"
+ExecStart=/home/cyberbanking/venv/bin/gunicorn \
+    --workers 4 \
+    --worker-class sync \
+    --bind 127.0.0.1:8000 \
+    --timeout 120 \
+    --access-logfile /var/log/cyber-banking/access.log \
+    --error-logfile /var/log/cyber-banking/error.log \
+    cyber_physical_banking.wsgi:application
+
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

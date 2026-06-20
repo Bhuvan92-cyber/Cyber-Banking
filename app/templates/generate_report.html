@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphical Report - Cyber Physical Banking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .report-container {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .charts-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .chart-box {
+            flex: 1;
+            min-width: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fafafa;
+            text-align: center;
+        }
+        .chart-box img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .chart-placeholder-text {
+            color: #888;
+            font-style: italic;
+            padding: 50px 0;
+        }
+        .btn-back {
+            display: inline-block;
+            background-color: #5cb85c; /* Matches your green button */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-back:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="report-container">
+        <h2>Graphical Report</h2>
+
+        <div class="charts-wrapper">
+            <div class="chart-box">
+                {% if pie_chart_url %}
+                    <img src="{{ pie_chart_url }}" alt="Pie Chart">
+                {% elif MEDIA_URL %}
+                    <img src="{{ MEDIA_URL }}pie_chart.png" alt="Pie Chart">
+                {% else %}
+                    <div class="chart-placeholder-text">Pie Chart Image Missing</div>
+                {% endif %}
+            </div>
+
+            <div class="chart-box">
+                {% if line_chart_url %}
+                    <img src="{{ line_chart_url }}" alt="Line Chart">
+                {% elif MEDIA_URL %}
+                    <img src="{{ MEDIA_URL }}line_chart.png" alt="Line Chart">
+                {% else %}
+                    <div class="chart-placeholder-text">Line Chart Image Missing</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>
