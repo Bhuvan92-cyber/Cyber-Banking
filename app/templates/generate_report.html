@@ -55,7 +55,7 @@
         }
         .btn-back {
             display: inline-block;
-            background-color: #5cb85c; /* Matches your green button */
+            background-color: #5cb85c;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
@@ -75,20 +75,16 @@
 
         <div class="charts-wrapper">
             <div class="chart-box">
-                {% if pie_chart_url %}
-                    <img src="{{ pie_chart_url }}" alt="Pie Chart">
-                {% elif MEDIA_URL %}
-                    <img src="{{ MEDIA_URL }}pie_chart.png" alt="Pie Chart">
+                {% if pie_chart %}
+                    <img src="{{ pie_chart }}" alt="Algorithm Accuracy Comparison - Pie Chart">
                 {% else %}
                     <div class="chart-placeholder-text">Pie Chart Image Missing</div>
                 {% endif %}
             </div>
 
             <div class="chart-box">
-                {% if line_chart_url %}
-                    <img src="{{ line_chart_url }}" alt="Line Chart">
-                {% elif MEDIA_URL %}
-                    <img src="{{ MEDIA_URL }}line_chart.png" alt="Line Chart">
+                {% if line_chart %}
+                    <img src="{{ line_chart }}" alt="Algorithm Accuracy - Line Chart">
                 {% else %}
                     <div class="chart-placeholder-text">Line Chart Image Missing</div>
                 {% endif %}

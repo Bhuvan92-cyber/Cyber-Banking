@@ -365,55 +365,58 @@ def generate_report(request):
         'lr': 'Logistic Regression'
     }
 
-
-    # Assuming MODELS_RESULTS is defined somewhere in your code
+    # Fetch results from session
     MODELS_RESULTS = request.session.get('MODELS_ACCURACY', {})
-
 
     # Prepare data for charting
     names = []
     scores = []
     for key, label in all_algos.items():
         score = MODELS_RESULTS.get(key)
+        # Ensure score is a valid positive number and not NaN
         if isinstance(score, (int, float)) and not np.isnan(score) and score > 0:
             names.append(label)
             scores.append(score)
 
-
+    # Early exit if no data exists
     if not scores:
         return HttpResponse("<h3>No model has been run yet. Please run at least one algorithm first.</h3>")
 
-
-
-    # Pie Chart
+    # 1. Generate Pie Chart
     plt.figure(figsize=(6, 6))
     plt.pie(scores, labels=names, autopct='%1.1f%%', startangle=90)
     plt.title("Algorithm Accuracy Comparison - Pie Chart")
-    pie_path = os.path.join(settings.MEDIA_ROOT, 'pie.png')
-    plt.savefig(pie_path)
-    plt.close()  # Prevent memory issues
+    
+    # Save pie chart to a memory buffer
+    pie_buffer = io.BytesIO()
+    plt.savefig(pie_buffer, format='png', bbox_inches='tight')
+    pie_buffer.seek(0)
+    pie_base64 = base64.b64encode(pie_buffer.read()).decode('utf-8')
+    plt.close()  # Free memory
 
-
-    # Line Chart
-    plt.figure()
+    # 2. Generate Line Chart
+    plt.figure(figsize=(6, 4))
     plt.plot(names, scores, marker='o', linestyle='-', color='blue')
     plt.title("Algorithm Accuracy - Line Chart")
     plt.xlabel("Algorithms")
     plt.ylabel("Accuracy")
     plt.ylim(0, 1)
-    line_path = os.path.join(settings.MEDIA_ROOT, 'line.png')
-    plt.savefig(line_path)
-    plt.close()
+    
+    # Save line chart to a memory buffer
+    line_buffer = io.BytesIO()
+    plt.savefig(line_buffer, format='png', bbox_inches='tight')
+    line_buffer.seek(0)
+    line_base64 = base64.b64encode(line_buffer.read()).decode('utf-8')
+    plt.close()  # Free memory
 
+    # Construct the context dictionary to pass to the template
+    context = {
+        'pie_chart': f"data:image/png;base64,{pie_base64}",
+        'line_chart': f"data:image/png;base64,{line_base64}",
+        'dashboard_url': reverse('dashboard')  # Assumes 'dashboard' is a named URL in urls.py
+    }
 
-    return HttpResponse(f"""
-        <h3>Graphical Report</h3>
-        <img src="/media/pie.png" width="400" alt="Pie Chart"/>
-        <img src="/media/line.png" width="400" alt="Line Chart"/>
-        <br><br>
-        <a href="{reverse('dashboard')}" style="padding: 10px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Back to Dashboard</a>
-    """)
-
+    return render(request, 'generate_report.html', context)
 
 @login_required
 def predict_best_algorithm(request):
