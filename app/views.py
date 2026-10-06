@@ -116,50 +116,60 @@ def compute_dataset_hash(df):
 def upload_dataset(request):
     global DATASET_CACHE
 
+    # Ensure media and datasets directories exist
+    dataset_dir = os.path.join(settings.MEDIA_ROOT, 'datasets')
+    os.makedirs(dataset_dir, exist_ok=True)
+
     if request.method == 'POST':
         form = UploadCSVForm(request.POST, request.FILES)
         if form.is_valid():
-            uploaded_file = form.cleaned_data['file']
-            dataset_dir = os.path.join(settings.MEDIA_ROOT, 'datasets')
-            os.makedirs(dataset_dir, exist_ok=True)
+            try:
+                uploaded_file = form.cleaned_data['file']
+                if not uploaded_file.name.lower().endswith('.csv'):
+                    messages.error(request, "Only CSV files are allowed.")
+                    return render(request, 'upload_dataset.html', {'form': form})
 
-            path = os.path.join(dataset_dir, uploaded_file.name)
+                path = os.path.join(dataset_dir, uploaded_file.name)
 
-            # Save uploaded CSV to disk
-            with open(path, 'wb+') as dest:
-                for chunk in uploaded_file.chunks():
-                    dest.write(chunk)
+                # Save uploaded CSV to disk safely
+                with open(path, 'wb+') as dest:
+                    for chunk in uploaded_file.chunks():
+                        dest.write(chunk)
 
-            # Load dataset into DataFrame
-            df = pd.read_csv(path)
+                # Load dataset into DataFrame to validate readability
+                df = pd.read_csv(path)
 
-            # Compute dataset hash
-            dataset_hash = compute_dataset_hash(df)
+                # Compute dataset hash
+                dataset_hash = compute_dataset_hash(df)
 
-            # ---- Key Change: Always replace dataset in cache ----
-            DATASET_CACHE[dataset_hash] = {
-                'dataframe': df,
-                'results': {}  # Reset results when new dataset uploaded
-            }
+                # Update dataset in memory cache
+                DATASET_CACHE[dataset_hash] = {
+                    'dataframe': df,
+                    'results': {}
+                }
 
-            # Update session
-            request.session['DATASET_HASH'] = dataset_hash
+                # Update user session
+                request.session['DATASET_HASH'] = dataset_hash
 
-            # Remove any existing UploadedDataset entry for this user with same hash
-            UploadedDataset.objects.filter(user=request.user, file__icontains=uploaded_file.name).delete()
+                # Remove any existing UploadedDataset entry for this user with same filename
+                UploadedDataset.objects.filter(user=request.user, file__icontains=uploaded_file.name).delete()
 
-            # Create new record
-            UploadedDataset.objects.create(user=request.user, file=uploaded_file)
+                # Create new record in DB
+                UploadedDataset.objects.create(user=request.user, file=uploaded_file)
 
-            messages.success(request, "Dataset uploaded successfully.")
+                messages.success(request, f"Dataset '{uploaded_file.name}' uploaded and processed successfully! ({df.shape[0]} rows, {df.shape[1]} columns)")
+                return render(request, 'upload_dataset.html', {'form': form})
 
-            return render(request, 'upload_dataset.html', {'form': form})
+            except Exception as e:
+                messages.error(request, f"Failed to process uploaded file: {str(e)}")
+                return render(request, 'upload_dataset.html', {'form': form})
         else:
-            messages.error(request, "There was an error uploading the file.")
+            messages.error(request, "Invalid form submission. Please select a valid CSV file.")
     else:
         form = UploadCSVForm()
 
     return render(request, 'upload_dataset.html', {'form': form})
+
 
 
 

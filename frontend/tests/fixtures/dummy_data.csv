@@ -1,0 +1,6 @@
+Age,Balance,Transaction_Count,Credit_Score,Account_Type,target
+28,4500.50,110,650,Savings,0
+42,82000.00,340,780,Current,0
+35,11500.25,130,610,Savings,1
+54,51000.00,290,740,Current,0
+23,2100.00,85,580,Savings,1

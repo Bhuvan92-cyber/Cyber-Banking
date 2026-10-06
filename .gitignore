@@ -1,9 +1,14 @@
-# Environment variables
+# =============================================================
+# CyberPhysicalBanking v2 — .gitignore
+# =============================================================
+
+# ── Environment & Secrets ────────────────────────────────────
 .env
 .env.local
-.env.*.local
+# NEVER commit real credentials
+credentials.txt
 
-# Python
+# ── Python ───────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,6 +16,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 develop-eggs/
@@ -28,30 +34,45 @@ wheels/
 .installed.cfg
 *.egg
 
-# Django
+# ── Django ────────────────────────────────────────────────────
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
-/staticfiles
-/static
+*.sqlite3
+staticfiles/
+static/
 
-# IDE
+# ── Media / Uploads ───────────────────────────────────────────
+media/
+
+# ── IDE & OS ──────────────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
+Thumbs.db
 
-# Testing
+# ── Testing & Coverage ────────────────────────────────────────
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Docker
+# ── Docker ───────────────────────────────────────────────────
 docker-compose.override.yml
 
-# Credentials
-credentials.txt
+# ── ChromaDB local persistence (generated at runtime) ────────
+chroma_db/
+chromadb/
+
+# ── Frontend & Node ──────────────────────────────────────────
+.next/
+frontend/.next/
+node_modules/
+frontend/node_modules/
+playwright-report/
+frontend/playwright-report/
+test-results/
+frontend/test-results/
