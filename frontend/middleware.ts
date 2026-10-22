@@ -15,6 +15,8 @@ export function middleware(request: NextRequest) {
 
   if (isProtected && !sessionid) {
     const loginUrl = new URL('/login', request.url);
+    const redirectTarget = pathname.replace(/^\//, '');
+    loginUrl.searchParams.set('redirect', redirectTarget);
     loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }

@@ -16,15 +16,20 @@ import os
 from pathlib import Path
 
 from django.conf import settings
+from django.db import transaction
 from django.http import FileResponse, HttpResponse
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import (
+    AdminAuditLogSerializer,
+    AdminUserSerializer,
+    AdminUserUpdateSerializer,
     ChatQuerySerializer,
     DatasetUploadSerializer,
     PredictionRequestSerializer,
@@ -459,13 +464,16 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     """
-    Destroys active Django session.
+    Destroys active Django session and deletes session cookies.
     """
     permission_classes = [AllowAny]
 
     def post(self, request: Request) -> Response:
         logout(request)
-        return Response({"message": "Logout successful."}, status=status.HTTP_200_OK)
+        response = Response({"message": "Logout successful."}, status=status.HTTP_200_OK)
+        session_cookie_name = getattr(settings, "SESSION_COOKIE_NAME", "sessionid")
+        response.delete_cookie(session_cookie_name)
+        return response
 
 
 class RegisterView(APIView):
@@ -522,5 +530,274 @@ class HealthCheckView(APIView):
             status_info["status"] = "unhealthy"
             status_info["database"] = str(exc)
             return Response(status_info, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Administrative User Management & RBAC
+# ─────────────────────────────────────────────────────────────────────────────
+
+class IsSuperUser(BasePermission):
+    """
+    Strict permission class ensuring only authenticated superusers have access.
+    """
+    def has_permission(self, request: Request, view) -> bool:
+        return bool(request.user and request.user.is_authenticated and request.user.is_superuser)
+
+
+def _invalidate_user_sessions(user_id: int | str) -> None:
+    """
+    Purges all active sessions for the specified user.
+    Ensures immediate revocation upon role demotion, deactivation, or deletion.
+    """
+    try:
+        from django.contrib.sessions.models import Session
+        for s in Session.objects.all():
+            data = s.get_decoded()
+            if str(data.get("_auth_user_id")) == str(user_id):
+                s.delete()
+    except Exception:
+        pass
+
+
+def _extract_request_meta(request: Request | None) -> tuple[str | None, str]:
+    """Extracts client IP address and HTTP User Agent string from request metadata."""
+    if not request:
+        return None, ""
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(",")[0].strip()
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+    user_agent = request.META.get("HTTP_USER_AGENT", "")[:500]
+    return ip, user_agent
+
+
+def _apply_user_updates(target_user: User, data: dict, requesting_user: User, request: Request | None = None) -> Response:
+    """
+    Helper to apply role, status, and permission updates to a user.
+    Wraps mutation in transaction.atomic() with audit metadata attached.
+    """
+    serializer = AdminUserUpdateSerializer(data=data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    validated = serializer.validated_data
+    role = validated.get("role")
+    is_active = validated.get("is_active")
+    is_staff = validated.get("is_staff")
+    is_superuser = validated.get("is_superuser")
+
+    # Handle role mutations
+    if role:
+        if target_user.id == requesting_user.id and role != "Superadmin":
+            other_superusers = (
+                User.objects.filter(is_superuser=True, is_active=True)
+                .exclude(pk=target_user.pk)
+                .exists()
+            )
+            if not other_superusers:
+                return Response(
+                    {"error": "Cannot demote the sole active superuser account."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        if role == "Superadmin":
+            target_user.is_staff = True
+            target_user.is_superuser = True
+        elif role == "Staff Analyst":
+            target_user.is_staff = True
+            target_user.is_superuser = False
+        elif role == "Standard User":
+            target_user.is_staff = False
+            target_user.is_superuser = False
+    else:
+        if is_staff is not None:
+            target_user.is_staff = is_staff
+        if is_superuser is not None:
+            target_user.is_superuser = is_superuser
+
+    # Handle account status (Active / Inactive)
+    if is_active is not None:
+        if target_user.id == requesting_user.id and not is_active:
+            return Response(
+                {"error": "You cannot deactivate your own superuser account."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        target_user.is_active = is_active
+        if not is_active:
+            _invalidate_user_sessions(target_user.id)
+
+    # Attach audit context for signal logger
+    ip, user_agent = _extract_request_meta(request)
+    target_user._actor = requesting_user
+    target_user._ip_address = ip
+    target_user._user_agent = user_agent
+
+    with transaction.atomic():
+        target_user.save()
+
+    return Response(
+        {
+            "message": f"User '{target_user.username}' updated successfully.",
+            "user": AdminUserSerializer(target_user).data,
+        },
+        status=status.HTTP_200_OK,
+    )
+
+
+class AdminUserListView(APIView):
+    """
+    Administrative endpoint to list users and apply batch or targeted updates.
+    GET   /api/admin/users/  → List all users
+    PATCH /api/admin/users/  → Update user specified in payload
+    DELETE /api/admin/users/ → Delete user specified by id in payload or query
+    """
+    permission_classes = [IsSuperUser]
+
+    def get(self, request: Request) -> Response:
+        users = User.objects.all().order_by("-date_joined", "id")
+        serializer = AdminUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request: Request) -> Response:
+        user_id = request.data.get("id") or request.data.get("user_id")
+        if not user_id:
+            return Response(
+                {"error": "User ID ('id' or 'user_id') is required for update."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            target_user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        return _apply_user_updates(target_user, request.data, request.user, request=request)
+
+    def delete(self, request: Request) -> Response:
+        user_id = request.query_params.get("id") or request.data.get("id")
+        if not user_id:
+            return Response(
+                {"error": "User ID is required for deletion."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            target_user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if target_user.id == request.user.id:
+            return Response(
+                {"error": "You cannot delete your own superuser account."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ip, user_agent = _extract_request_meta(request)
+        target_user._actor = request.user
+        target_user._ip_address = ip
+        target_user._user_agent = user_agent
+
+        with transaction.atomic():
+            _invalidate_user_sessions(target_user.id)
+            username = target_user.username
+            target_user.delete()
+
+        return Response(
+            {"message": f"User '{username}' successfully deleted."},
+            status=status.HTTP_200_OK,
+        )
+
+
+class AdminUserDetailView(APIView):
+    """
+    Administrative endpoint for individual user operations:
+    GET    /api/admin/users/<int:pk>/  → Retrieve user
+    PATCH  /api/admin/users/<int:pk>/  → Update role, status, or permissions
+    PUT    /api/admin/users/<int:pk>/  → Update role, status, or permissions
+    DELETE /api/admin/users/<int:pk>/  → Permanently delete user
+    """
+    permission_classes = [IsSuperUser]
+
+    def get(self, request: Request, pk: int) -> Response:
+        try:
+            target_user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(AdminUserSerializer(target_user).data, status=status.HTTP_200_OK)
+
+    def patch(self, request: Request, pk: int) -> Response:
+        try:
+            target_user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        return _apply_user_updates(target_user, request.data, request.user, request=request)
+
+    def put(self, request: Request, pk: int) -> Response:
+        return self.patch(request, pk)
+
+    def delete(self, request: Request, pk: int) -> Response:
+        try:
+            target_user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if target_user.id == request.user.id:
+            return Response(
+                {"error": "You cannot delete your own superuser account."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ip, user_agent = _extract_request_meta(request)
+        target_user._actor = request.user
+        target_user._ip_address = ip
+        target_user._user_agent = user_agent
+
+        with transaction.atomic():
+            _invalidate_user_sessions(target_user.id)
+            username = target_user.username
+            target_user.delete()
+
+        return Response(
+            {"message": f"User '{username}' successfully deleted."},
+            status=status.HTTP_200_OK,
+        )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Compliance Audit Log API (Read-Only)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class AdminAuditLogPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class AdminAuditLogListView(APIView):
+    """
+    Read-only compliance audit log endpoint for banking regulatory compliance.
+    Only authenticated superusers can retrieve audit logs.
+    Mutations (POST, PUT, PATCH, DELETE) are disallowed (HTTP 405 Method Not Allowed).
+    """
+    permission_classes = [IsSuperUser]
+
+    def get(self, request: Request) -> Response:
+        from audit.models import AuditLog
+        queryset = (
+            AuditLog.objects
+            .select_related("actor", "target_user")
+            .all()
+            .order_by("-timestamp")
+        )
+
+        action_type = request.query_params.get("action_type")
+        if action_type:
+            queryset = queryset.filter(action_type=action_type)
+
+        paginator = AdminAuditLogPagination()
+        paginated_logs = paginator.paginate_queryset(queryset, request)
+        serializer = AdminAuditLogSerializer(paginated_logs, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+
 
 

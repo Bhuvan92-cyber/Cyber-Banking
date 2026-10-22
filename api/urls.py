@@ -6,6 +6,9 @@ This module is included into the root urls.py under the 'api/' prefix.
 """
 from django.urls import path
 from .views import (
+    AdminAuditLogListView,
+    AdminUserDetailView,
+    AdminUserListView,
     CSRFTokenView,
     ChatView,
     CurrentUserView,
@@ -30,6 +33,11 @@ urlpatterns = [
     path("auth/login/", LoginView.as_view(), name="auth-login"),
     path("auth/logout/", LogoutView.as_view(), name="auth-logout"),
     path("auth/register/", RegisterView.as_view(), name="auth-register"),
+
+    # ── Administrative User Management & RBAC ─────────────────────────────────
+    path("admin/users/", AdminUserListView.as_view(), name="admin-users-list"),
+    path("admin/users/<int:pk>/", AdminUserDetailView.as_view(), name="admin-users-detail"),
+    path("admin/audit-logs/", AdminAuditLogListView.as_view(), name="admin-audit-logs"),
 
     # ── Core ML API ──────────────────────────────────────────────────────────
     # POST  /api/upload/   → upload CSV, get dataset summary

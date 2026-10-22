@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     # Local apps
     'app',
     'api',                     # REST API layer (Phase 3)
+    'audit.apps.AuditConfig',  # Compliance Audit Trail
 ]
 
 MIDDLEWARE = [

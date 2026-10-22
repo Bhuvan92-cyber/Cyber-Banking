@@ -1,19 +1,52 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Users, Shield, LogOut, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.replace('/login?redirect=admin');
+      } else if (!user?.is_staff) {
+        toast.error('Access denied. Staff administrator privileges required.');
+        router.replace('/dashboard');
+      }
+    }
+  }, [isAuthenticated, isLoading, user, router]);
 
   const handleLogout = async () => {
-    await logout();
-    toast.success('Logged out successfully');
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+      router.push('/login?redirect=admin');
+    } catch {
+      router.push('/login?redirect=admin');
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-900 text-white">
+        <div className="flex items-center gap-3">
+          <Shield className="w-6 h-6 text-red-500 animate-pulse" />
+          <span className="text-sm font-medium">Verifying admin authorization...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user?.is_staff) {
+    return null;
+  }
 
   const navItems = [
     { href: '/admin', label: 'System Overview', icon: LayoutDashboard },

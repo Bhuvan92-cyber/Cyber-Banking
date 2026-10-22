@@ -1,18 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Upload, MessageSquare, FileText, LogOut, ShieldCheck, Users } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
-    await logout();
-    toast.success('Logged out successfully');
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+      router.push('/login?redirect=dashboard');
+    } catch {
+      router.push('/login?redirect=dashboard');
+    }
   };
 
   const navItems = [

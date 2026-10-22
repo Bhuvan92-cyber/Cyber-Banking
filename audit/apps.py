@@ -1,0 +1,14 @@
+from django.apps import AppConfig
+
+
+class AuditConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'audit'
+    verbose_name = 'Compliance Audit Trail'
+
+    def ready(self):
+        try:
+            import audit.signals  # noqa: F401
+        except ImportError:
+            pass
+
